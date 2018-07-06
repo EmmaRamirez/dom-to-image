@@ -1,4 +1,4 @@
-### Use case: description, code  
+<!-- ### Use case: description, code  
 
 [jsfiddle](https://jsfiddle.net/tsayen/ojb1b31r/2/)
 
@@ -12,4 +12,4 @@
 
 - [ ] Chrome 49+  
 - [ ] Firefox 45+  
-
+ -->

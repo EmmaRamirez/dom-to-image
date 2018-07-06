@@ -2,43 +2,27 @@
 
 [![Build Status](https://travis-ci.org/tsayen/dom-to-image.svg?branch=master)](https://travis-ci.org/tsayen/dom-to-image)
 
-## What is it
+## About This Fork
 
-**dom-to-image** is a library which can turn arbitrary DOM node into
-a vector (SVG) or raster (PNG or JPEG) image, written in JavaScript. It's
-based on [domvas by Paul Bakaus](https://github.com/pbakaus/domvas)
-and has been completely rewritten, with some bugs fixed and some new
-features (like web font and image support) added.
+This is a fork of the popular [**dom-to-image**](htts://github.com/tsayen/dom-to-image), which is
+based on [domvas by Paul Bakaus](https://github.com/pbakaus/domvas).
+
+This fork is a complete rewrite of the original dom-to-image, patching some bugs & rewritten in Typescript.
+It also tightens up imports, adds a React component, and more!
 
 ## Installation
 
-### NPM
+### npm
 
-`npm install dom-to-image`
+`npm install @emmaramirez/dom-to-image`
 
 Then load
 
 ```javascript
-/* in ES 6 */
-import domtoimage from 'dom-to-image';
-/* in ES 5 */
-var domtoimage = require('dom-to-image');
+import { domToImage } from '@emmaramirez/dom-to-image';
 ```
 
-### Bower
-
-`bower install dom-to-image`
-
-Include either `src/dom-to-image.js` or `dist/dom-to-image.min.js` in your page
-and it will make the `domtoimage` variable available in the global scope.
-
-```html
-<script src="path/to/dom-to-image.min.js" />
-<script>
-  domtoimage.toPng(node)
-  //...
-</script>
-```
+> Note: There is no longer support for bower
 
 ## Usage
 
@@ -240,14 +224,14 @@ for you, following steps are taken:
 -   if the DOM node you want to render includes a `<canvas>` element with
     something drawn on it, it should be handled fine, unless the canvas is
     [tainted](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image) -
-    in this case rendering will rather not succeed.  
+    in this case rendering will not succeed.  
 
 -   at the time of writing, Firefox has a problem with some external stylesheets
     (see issue #13). In such case, the error will be caught and logged.  
 
 ## Authors
 
-Anatolii Saienko, Paul Bakaus (original idea)
+Emma Ramirez, Anatolii Saienko (second iteration of idea), Paul Bakaus (original idea)
 
 ## License
 

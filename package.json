@@ -1,9 +1,16 @@
 {
-    "name": "dom-to-image",
+    "name": "@emmaramirez/dom-to-image",
     "version": "2.6.0",
     "description": "Generates an image from a DOM node using HTML5 canvas and SVG",
     "main": "src/dom-to-image.js",
-    "dependencies": {},
+    "dependencies": {
+        "lodash.camelcase": "^4.3.0",
+        "rollup": "^0.62.0",
+        "rollup-plugin-commonjs": "^9.1.3",
+        "rollup-plugin-json": "^3.0.0",
+        "rollup-plugin-node-resolve": "^3.3.0",
+        "rollup-plugin-typescript2": "^0.15.1"
+    },
     "devDependencies": {
         "chai": "^2.2.0",
         "grunt": "~0.4.5",
@@ -18,14 +25,20 @@
         "karma-firefox-launcher": "^0.1.4",
         "karma-mocha": "^0.1.10",
         "karma-mocha-reporter": "^1.3.0",
-        "mocha": "^2.2.4"
+        "mocha": "^2.2.4",
+        "tslint": "^5.10.0",
+        "tslint-microsoft-contrib": "^5.0.3",
+        "typescript": "^2.9.2"
     },
     "scripts": {
+        "build": "npx rollup src/dom-to-image.ts",
+        "format": "npx prettier --config .prettierrc --write **/**/*.{ts,tsx} && npm run lint",
+        "lint": "npx tslint --fix -c tslint.json 'src/**/*.{ts,tsx}'",
         "test": "./node_modules/.bin/grunt test"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/tsayen/dom-to-image.git"
+        "url": "git+https://github.com/emmaramirez/dom-to-image.git"
     },
     "keywords": [
         "dom",
@@ -36,10 +49,13 @@
         "canvas",
         "svg"
     ],
-    "author": "Anatolii Saienko <anatoly.sayenko@gmail.com>",
+    "authors": [
+        "Emma Ramirez <ramirez.emma.g@gmail.com>",
+        "Anatolii Saienko <anatoly.sayenko@gmail.com>"
+    ],
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/tsayen/dom-to-image/issues"
+        "url": "https://github.com/EmmaRamirez/dom-to-image/issues"
     },
-    "homepage": "https://github.com/tsayen/dom-to-image#readme"
+    "homepage": "https://github.com/EmmaRamirez/dom-to-image#readme"
 }
