@@ -1,7 +1,7 @@
 export class Utility {
     constructor() {}
 
-    private static mimes () {
+    private static mimes() {
         /*
          * Only WOFF and EOT mime types for fonts are 'real'
          * see http://www.iana.org/assignments/media-types/media-types.xhtml
@@ -10,28 +10,26 @@ export class Utility {
         const JPEG = 'image/jpeg';
 
         return {
-            'woff': WOFF,
-            'woff2': WOFF,
-            'ttf': 'application/font-truetype',
-            'eot': 'application/vnd.ms-fontobject',
-            'png': 'image/png',
-            'jpg': JPEG,
-            'jpeg': JPEG,
-            'gif': 'image/gif',
-            'tiff': 'image/tiff',
-            'svg': 'image/svg+xml'
+            woff: WOFF,
+            woff2: WOFF,
+            ttf: 'application/font-truetype',
+            eot: 'application/vnd.ms-fontobject',
+            png: 'image/png',
+            jpg: JPEG,
+            jpeg: JPEG,
+            gif: 'image/gif',
+            tiff: 'image/tiff',
+            svg: 'image/svg+xml',
         };
     }
 
-    public static escape() {
+    public static escape() {}
 
-    }
-
-    public static parseExtension () {}
+    public static parseExtension() {}
     public static mimeType() {}
     public static dataAsUrl() {}
     public static isDataUrl() {}
-    public static canvasToBlob () {}
+    public static canvasToBlob() {}
     public static resolveUrl() {}
     public static getAndEncode() {}
     public static uuid() {}

@@ -32,8 +32,8 @@
     },
     "scripts": {
         "build": "npx rollup src/dom-to-image.ts",
-        "format": "npx prettier --config .prettierrc --write **/**/*.{ts,tsx} && npm run lint",
-        "lint": "npx tslint --fix -c tslint.json 'src/**/*.{ts,tsx}'",
+        "format": "npx prettier --config .prettierrc --write {spec,src}/**/*.{ts,tsx} && npm run lint",
+        "lint": "npx tslint --fix -c tslint.json '{spec,src}/**/*.{ts,tsx}'",
         "test": "./node_modules/.bin/grunt test"
     },
     "repository": {

@@ -1,4 +1,4 @@
-(function (global) {
+(function(global) {
     'use strict';
 
     const util = newUtil();
@@ -11,7 +11,7 @@
         // Default is to fail on error, no placeholder
         imagePlaceholder: undefined,
         // Default cache bust is false, it will use the cache
-        cacheBust: false
+        cacheBust: false,
     };
 
     const domtoimage = {
@@ -25,15 +25,12 @@
             images: images,
             util: util,
             inliner: inliner,
-            options: {}
-        }
+            options: {},
+        },
     };
 
-    if (typeof module !== 'undefined')
-        module.exports = domtoimage;
-    else
-        global.domtoimage = domtoimage;
-
+    if (typeof module !== 'undefined') module.exports = domtoimage;
+    else global.domtoimage = domtoimage;
 
     /**
      * @param {Node} node - The DOM Node object to render
@@ -54,16 +51,17 @@
         options = options || {};
         copyOptions(options);
         return Promise.resolve(node)
-            .then(function (node) {
+            .then(function(node) {
                 return cloneNode(node, options.filter, true);
             })
             .then(embedFonts)
             .then(inlineImages)
             .then(applyOptions)
-            .then(function (clone) {
-                return makeSvgDataUri(clone,
+            .then(function(clone) {
+                return makeSvgDataUri(
+                    clone,
                     options.width || util.width(node),
-                    options.height || util.height(node)
+                    options.height || util.height(node),
                 );
             });
 
@@ -74,7 +72,7 @@
             if (options.height) clone.style.height = options.height + 'px';
 
             if (options.style)
-                Object.keys(options.style).forEach(function (property) {
+                Object.keys(options.style).forEach(function(property) {
                     clone.style[property] = options.style[property];
                 });
 
@@ -88,15 +86,11 @@
      * @return {Promise} - A promise that is fulfilled with a Uint8Array containing RGBA pixel data.
      * */
     function toPixelData(node, options) {
-        return draw(node, options || {})
-            .then(function (canvas:any) {
-                return canvas.getContext('2d').getImageData(
-                    0,
-                    0,
-                    util.width(node),
-                    util.height(node)
-                ).data;
-            });
+        return draw(node, options || {}).then(function(canvas: any) {
+            return canvas
+                .getContext('2d')
+                .getImageData(0, 0, util.width(node), util.height(node)).data;
+        });
     }
 
     /**
@@ -105,10 +99,9 @@
      * @return {Promise} - A promise that is fulfilled with a PNG image data URL
      * */
     function toPng(node, options) {
-        return draw(node, options || {})
-            .then(function (canvas) {
-                return canvas.toDataURL();
-            });
+        return draw(node, options || {}).then(function(canvas) {
+            return canvas.toDataURL();
+        });
     }
 
     /**
@@ -118,10 +111,9 @@
      * */
     function toJpeg(node, options) {
         options = options || {};
-        return draw(node, options)
-            .then(function (canvas) {
-                return canvas.toDataURL('image/jpeg', options.quality || 1.0);
-            });
+        return draw(node, options).then(function(canvas) {
+            return canvas.toDataURL('image/jpeg', options.quality || 1.0);
+        });
     }
 
     /**
@@ -129,20 +121,19 @@
      * @param {Object} options - Rendering options, @see {@link toSvg}
      * @return {Promise} - A promise that is fulfilled with a PNG image blob
      * */
-    function toBlob(node, options:any) {
-        return draw(node, options || {})
-            .then(util.canvasToBlob);
+    function toBlob(node, options: any) {
+        return draw(node, options || {}).then(util.canvasToBlob);
     }
 
-    function copyOptions(options:any) {
+    function copyOptions(options: any) {
         // Copy options to impl options for use in impl
-        if (typeof(options.imagePlaceholder) === 'undefined') {
+        if (typeof options.imagePlaceholder === 'undefined') {
             domtoimage.impl.options.imagePlaceholder = defaultOptions.imagePlaceholder;
         } else {
             domtoimage.impl.options.imagePlaceholder = options.imagePlaceholder;
         }
 
-        if (typeof(options.cacheBust) === 'undefined') {
+        if (typeof options.cacheBust === 'undefined') {
             domtoimage.impl.options.cacheBust = defaultOptions.cacheBust;
         } else {
             domtoimage.impl.options.cacheBust = options.cacheBust;
@@ -153,7 +144,7 @@
         return toSvg(domNode, options)
             .then(util.makeImage)
             .then(util.delay(100))
-            .then(function (image) {
+            .then(function(image) {
                 const canvas = newCanvas(domNode);
                 canvas.getContext('2d').drawImage(image, 0, 0);
                 return canvas;
@@ -179,10 +170,10 @@
 
         return Promise.resolve(node)
             .then(makeNodeCopy)
-            .then(function (clone) {
+            .then(function(clone) {
                 return cloneChildren(node, clone, filter);
             })
-            .then(function (clone) {
+            .then(function(clone) {
                 return processClone(node, clone);
             });
 
@@ -195,19 +186,18 @@
             const children = original.childNodes;
             if (children.length === 0) return Promise.resolve(clone);
 
-            return cloneChildrenInOrder(clone, util.asArray(children), filter)
-                .then(function () {
-                    return clone;
-                });
+            return cloneChildrenInOrder(clone, util.asArray(children), filter).then(function() {
+                return clone;
+            });
 
             function cloneChildrenInOrder(parent, children, filter) {
                 const done = Promise.resolve();
-                children.forEach(function (child) {
+                children.forEach(function(child) {
                     done = done
-                        .then(function () {
+                        .then(function() {
                             return cloneNode(child, filter);
                         })
-                        .then(function (childClone) {
+                        .then(function(childClone) {
                             if (childClone) parent.appendChild(childClone);
                         });
                 });
@@ -223,7 +213,7 @@
                 .then(clonePseudoElements)
                 .then(copyUserInput)
                 .then(fixSvg)
-                .then(function () {
+                .then(function() {
                     return clone;
                 });
 
@@ -237,11 +227,11 @@
                     target.fontStretch = 'normal';
 
                     function copyProperties(source, target) {
-                        util.asArray(source).forEach(function (name) {
+                        util.asArray(source).forEach(function(name) {
                             target.setProperty(
                                 name,
                                 source.getPropertyValue(name),
-                                source.getPropertyPriority(name)
+                                source.getPropertyPriority(name),
                             );
                         });
                     }
@@ -249,7 +239,7 @@
             }
 
             function clonePseudoElements() {
-                [':before', ':after'].forEach(function (element) {
+                [':before', ':after'].forEach(function(element) {
                     clonePseudoElement(element);
                 });
 
@@ -269,7 +259,9 @@
                     function formatPseudoElementStyle(className, element, style) {
                         // tslint:disable-next-line:prefer-template
                         const selector = '.' + className + ':' + element;
-                        const cssText = style.cssText ? formatCssText(style) : formatCssProperties(style);
+                        const cssText = style.cssText
+                            ? formatCssText(style)
+                            : formatCssProperties(style);
                         return document.createTextNode(selector + '{' + cssText + '}');
 
                         function formatCssText(style) {
@@ -279,16 +271,21 @@
                         }
 
                         function formatCssProperties(style) {
-
-                            return util.asArray(style)
-                                .map(formatProperty)
-                                .join('; ') + ';';
+                            return (
+                                util
+                                    .asArray(style)
+                                    .map(formatProperty)
+                                    .join('; ') + ';'
+                            );
 
                             function formatProperty(name) {
                                 // tslint:disable-next-line:prefer-template
-                                return name + ': ' +
+                                return (
+                                    name +
+                                    ': ' +
                                     style.getPropertyValue(name) +
-                                    (style.getPropertyPriority(name) ? ' !important' : '');
+                                    (style.getPropertyPriority(name) ? ' !important' : '')
+                                );
                             }
                         }
                     }
@@ -297,7 +294,8 @@
 
             function copyUserInput() {
                 if (original instanceof HTMLTextAreaElement) clone.innerHTML = original.value;
-                if (original instanceof HTMLInputElement) clone.setAttribute('value', original.value);
+                if (original instanceof HTMLInputElement)
+                    clone.setAttribute('value', original.value);
             }
 
             function fixSvg() {
@@ -305,7 +303,7 @@
                 clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
                 if (!(clone instanceof SVGRectElement)) return;
-                ['width', 'height'].forEach(function (attribute) {
+                ['width', 'height'].forEach(function(attribute) {
                     const value = clone.getAttribute(attribute);
                     if (!value) return;
 
@@ -316,39 +314,48 @@
     }
 
     function embedFonts(node) {
-        return fontFaces.resolveAll()
-            .then(function (cssText) {
-                const styleNode = document.createElement('style');
-                node.appendChild(styleNode);
-                styleNode.appendChild(document.createTextNode(cssText));
-                return node;
-            });
+        return fontFaces.resolveAll().then(function(cssText) {
+            const styleNode = document.createElement('style');
+            node.appendChild(styleNode);
+            styleNode.appendChild(document.createTextNode(cssText));
+            return node;
+        });
     }
 
     function inlineImages(node) {
-        return images.inlineAll(node)
-            .then(function () {
-                return node;
-            });
+        return images.inlineAll(node).then(function() {
+            return node;
+        });
     }
 
     function makeSvgDataUri(node, width, height) {
         return Promise.resolve(node)
-            .then(function (node) {
+            .then(function(node) {
                 node.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
                 return new XMLSerializer().serializeToString(node);
             })
             .then(util.escapeXhtml)
-            .then(function (xhtml) {
+            .then(function(xhtml) {
                 // tslint:disable-next-line:prefer-template
-                return '<foreignObject x="0" y="0" width="100%" height="100%">' + xhtml + '</foreignObject>';
+                return (
+                    '<foreignObject x="0" y="0" width="100%" height="100%">' +
+                    xhtml +
+                    '</foreignObject>'
+                );
             })
-            .then(function (foreignObject) {
+            .then(function(foreignObject) {
                 // tslint:disable-next-line:prefer-template
-                return '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '">' +
-                    foreignObject + '</svg>';
+                return (
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="' +
+                    width +
+                    '" height="' +
+                    height +
+                    '">' +
+                    foreignObject +
+                    '</svg>'
+                );
             })
-            .then(function (svg) {
+            .then(function(svg) {
                 return 'data:image/svg+xml;charset=utf-8,' + svg;
             });
     }
@@ -369,7 +376,7 @@
             escapeXhtml: escapeXhtml,
             makeImage: makeImage,
             width: width,
-            height: height
+            height: height,
         };
 
         function mimes() {
@@ -381,16 +388,16 @@
             const JPEG = 'image/jpeg';
 
             return {
-                'woff': WOFF,
-                'woff2': WOFF,
-                'ttf': 'application/font-truetype',
-                'eot': 'application/vnd.ms-fontobject',
-                'png': 'image/png',
-                'jpg': JPEG,
-                'jpeg': JPEG,
-                'gif': 'image/gif',
-                'tiff': 'image/tiff',
-                'svg': 'image/svg+xml'
+                woff: WOFF,
+                woff2: WOFF,
+                ttf: 'application/font-truetype',
+                eot: 'application/vnd.ms-fontobject',
+                png: 'image/png',
+                jpg: JPEG,
+                jpeg: JPEG,
+                gif: 'image/gif',
+                tiff: 'image/tiff',
+                svg: 'image/svg+xml',
             };
         }
 
@@ -410,23 +417,24 @@
         }
 
         function toBlob(canvas) {
-            return new Promise(function (resolve) {
+            return new Promise(function(resolve) {
                 const binaryString = window.atob(canvas.toDataURL().split(',')[1]);
                 const length = binaryString.length;
                 const binaryArray = new Uint8Array(length);
 
-                for (const i = 0; i < length; i++)
-                    binaryArray[i] = binaryString.charCodeAt(i);
+                for (const i = 0; i < length; i++) binaryArray[i] = binaryString.charCodeAt(i);
 
-                resolve(new Blob([binaryArray], {
-                    type: 'image/png'
-                }));
+                resolve(
+                    new Blob([binaryArray], {
+                        type: 'image/png',
+                    }),
+                );
             });
         }
 
         function canvasToBlob(canvas) {
             if (canvas.toBlob)
-                return new Promise(function (resolve) {
+                return new Promise(function(resolve) {
                     canvas.toBlob(resolve);
                 });
 
@@ -447,22 +455,24 @@
         function uid() {
             const index = 0;
 
-            return function () {
+            return function() {
                 // tslint:disable-next-line:prefer-template
                 return 'u' + fourRandomChars() + index++;
 
                 function fourRandomChars() {
                     /* see http://stackoverflow.com/a/6248722/2519373 */
                     // tslint:disable-next-line:insecure-random
-                    return ('0000' + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4);
+                    return ('0000' + ((Math.random() * Math.pow(36, 4)) << 0).toString(36)).slice(
+                        -4,
+                    );
                 }
             };
         }
 
         function makeImage(uri) {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 const image = new Image();
-                image.onload = function () {
+                image.onload = function() {
                     resolve(image);
                 };
                 image.onerror = reject;
@@ -475,10 +485,10 @@
             if (domtoimage.impl.options.cacheBust) {
                 // Cache bypass so we dont have CORS issues with cached images
                 // Source: https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest#Bypassing_the_cache
-                url += ((/\?/).test(url) ? '&' : '?') + (new Date()).getTime();
+                url += (/\?/.test(url) ? '&' : '?') + new Date().getTime();
             }
 
-            return new Promise(function (resolve) {
+            return new Promise(function(resolve) {
                 const request = new XMLHttpRequest();
 
                 request.onreadystatechange = done;
@@ -511,7 +521,7 @@
                     }
 
                     const encoder = new FileReader();
-                    encoder.onloadend = function () {
+                    encoder.onloadend = function() {
                         const content = encoder.result.split(/,/)[1];
                         resolve(content);
                     };
@@ -522,7 +532,9 @@
                     if (placeholder) {
                         resolve(placeholder);
                     } else {
-                        fail('timeout of ' + TIMEOUT + 'ms occured while fetching resource: ' + url);
+                        fail(
+                            'timeout of ' + TIMEOUT + 'ms occured while fetching resource: ' + url,
+                        );
                     }
                 }
 
@@ -542,9 +554,9 @@
         }
 
         function delay(ms) {
-            return function (arg) {
-                return new Promise(function (resolve) {
-                    setTimeout(function () {
+            return function(arg) {
+                return new Promise(function(resolve) {
+                    setTimeout(function() {
                         resolve(arg);
                     }, ms);
                 });
@@ -588,8 +600,8 @@
             shouldProcess: shouldProcess,
             impl: {
                 readUrls: readUrls,
-                inline: inline
-            }
+                inline: inline,
+            },
         };
 
         function shouldProcess(string) {
@@ -602,21 +614,21 @@
             while ((match = URL_REGEX.exec(string)) !== null) {
                 result.push(match[1]);
             }
-            return result.filter(function (url) {
+            return result.filter(function(url) {
                 return !util.isDataUrl(url);
             });
         }
 
         function inline(str, url, baseUrl, get) {
             return Promise.resolve(url)
-                .then(function (url) {
+                .then(function(url) {
                     return baseUrl ? util.resolveUrl(url, baseUrl) : url;
                 })
                 .then(get || util.getAndEncode)
-                .then(function (data) {
+                .then(function(data) {
                     return util.dataAsUrl(data, util.mimeType(url));
                 })
-                .then(function (dataUrl) {
+                .then(function(dataUrl) {
                     return str.replace(urlAsRegex(url), `$1${dataUrl}$3`);
                 });
 
@@ -630,10 +642,10 @@
 
             return Promise.resolve(string)
                 .then(readUrls)
-                .then(function (urls) {
+                .then(function(urls) {
                     const done = Promise.resolve(string);
-                    urls.forEach(function (url) {
-                        done = done.then(function (string) {
+                    urls.forEach(function(url) {
+                        done = done.then(function(string) {
                             return inline(string, url, baseUrl, get);
                         });
                     });
@@ -650,20 +662,20 @@
         return {
             resolveAll: resolveAll,
             impl: {
-                readAll: readAll
-            }
+                readAll: readAll,
+            },
         };
 
         function resolveAll() {
             return readAll(document)
-                .then(function (webFonts) {
+                .then(function(webFonts) {
                     return Promise.all(
-                        webFonts.map(function (webFont) {
+                        webFonts.map(function(webFont) {
                             return webFont.resolve();
-                        })
+                        }),
                     );
                 })
-                .then(function (cssStrings) {
+                .then(function(cssStrings) {
                     return cssStrings.join('\n');
                 });
         }
@@ -672,27 +684,30 @@
             return Promise.resolve(util.asArray(document.styleSheets))
                 .then(getCssRules)
                 .then(selectWebFontRules)
-                .then(function (rules) {
+                .then(function(rules) {
                     return rules.map(newWebFont);
                 });
 
             function selectWebFontRules(cssRules) {
                 return cssRules
-                    .filter(function (rule) {
+                    .filter(function(rule) {
                         return rule.type === CSSRule.FONT_FACE_RULE;
                     })
-                    .filter(function (rule) {
+                    .filter(function(rule) {
                         return inliner.shouldProcess(rule.style.getPropertyValue('src'));
                     });
             }
 
             function getCssRules(styleSheets) {
                 const cssRules = [];
-                styleSheets.forEach(function (sheet) {
+                styleSheets.forEach(function(sheet) {
                     try {
                         util.asArray(sheet.cssRules || []).forEach(cssRules.push.bind(cssRules));
                     } catch (e) {
-                        console.log('Error while reading CSS rules from ' + sheet.href, e.toString());
+                        console.log(
+                            'Error while reading CSS rules from ' + sheet.href,
+                            e.toString(),
+                        );
                     }
                 });
                 return cssRules;
@@ -704,9 +719,9 @@
                         const baseUrl = (webFontRule.parentStyleSheet || {}).href;
                         return inliner.inlineAll(webFontRule.cssText, baseUrl);
                     },
-                    src: function () {
+                    src: function() {
                         return webFontRule.style.getPropertyValue('src');
-                    }
+                    },
                 };
             }
         }
@@ -716,13 +731,13 @@
         return {
             inlineAll: inlineAll,
             impl: {
-                newImage: newImage
-            }
+                newImage: newImage,
+            },
         };
 
         function newImage(element) {
             return {
-                inline: inline
+                inline: inline,
             };
 
             function inline(get) {
@@ -730,11 +745,11 @@
 
                 return Promise.resolve(element.src)
                     .then(get || util.getAndEncode)
-                    .then(function (data) {
+                    .then(function(data) {
                         return util.dataAsUrl(data, util.mimeType(element.src));
                     })
-                    .then(function (dataUrl) {
-                        return new Promise(function (resolve, reject) {
+                    .then(function(dataUrl) {
+                        return new Promise(function(resolve, reject) {
                             element.onload = resolve;
                             element.onerror = reject;
                             element.src = dataUrl;
@@ -746,32 +761,31 @@
         function inlineAll(node) {
             if (!(node instanceof Element)) return Promise.resolve(node);
 
-            return inlineBackground(node)
-                .then(function () {
-                    if (node instanceof HTMLImageElement)
-                        return newImage(node).inline();
-                    else
-                        return Promise.all(
-                            util.asArray(node.childNodes).map(function (child) {
-                                return inlineAll(child);
-                            })
-                        );
-                });
+            return inlineBackground(node).then(function() {
+                if (node instanceof HTMLImageElement) return newImage(node).inline();
+                else
+                    return Promise.all(
+                        util.asArray(node.childNodes).map(function(child) {
+                            return inlineAll(child);
+                        }),
+                    );
+            });
 
             function inlineBackground(node) {
                 const background = node.style.getPropertyValue('background');
 
                 if (!background) return Promise.resolve(node);
 
-                return inliner.inlineAll(background)
-                    .then(function (inlined) {
+                return inliner
+                    .inlineAll(background)
+                    .then(function(inlined) {
                         node.style.setProperty(
                             'background',
                             inlined,
-                            node.style.getPropertyPriority('background')
+                            node.style.getPropertyPriority('background'),
                         );
                     })
-                    .then(function () {
+                    .then(function() {
                         return node;
                     });
             }
