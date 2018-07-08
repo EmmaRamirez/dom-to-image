@@ -1,4 +1,4 @@
-(function(global) {
+
     'use strict';
 
     const util = newUtil();
@@ -28,9 +28,6 @@
             options: {},
         },
     };
-
-    if (typeof module !== 'undefined') module.exports = domtoimage;
-    else global.domtoimage = domtoimage;
 
     /**
      * @param {Node} node - The DOM Node object to render
@@ -85,7 +82,7 @@
      * @param {Object} options - Rendering options, @see {@link toSvg}
      * @return {Promise} - A promise that is fulfilled with a Uint8Array containing RGBA pixel data.
      * */
-    function toPixelData(node, options) {
+    function toPixelData(node, options?) {
         return draw(node, options || {}).then(function(canvas: any) {
             return canvas
                 .getContext('2d')
@@ -98,7 +95,7 @@
      * @param {Object} options - Rendering options, @see {@link toSvg}
      * @return {Promise} - A promise that is fulfilled with a PNG image data URL
      * */
-    function toPng(node, options) {
+    function toPng(node, options?) {
         return draw(node, options || {}).then(function(canvas) {
             return canvas.toDataURL();
         });
@@ -109,7 +106,7 @@
      * @param {Object} options - Rendering options, @see {@link toSvg}
      * @return {Promise} - A promise that is fulfilled with a JPEG image data URL
      * */
-    function toJpeg(node, options) {
+    function toJpeg(node, options?) {
         options = options || {};
         return draw(node, options).then(function(canvas) {
             return canvas.toDataURL('image/jpeg', options.quality || 1.0);
@@ -121,7 +118,7 @@
      * @param {Object} options - Rendering options, @see {@link toSvg}
      * @return {Promise} - A promise that is fulfilled with a PNG image blob
      * */
-    function toBlob(node, options: any) {
+    function toBlob(node, options?: any) {
         return draw(node, options || {}).then(util.canvasToBlob);
     }
 
@@ -791,4 +788,5 @@
             }
         }
     }
-})(this);
+
+export { domtoimage as domToImage };
