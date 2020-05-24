@@ -7,7 +7,7 @@
     const images = newImages();
 
     // Default impl options
-    const defaultOptions = {
+    const defaultOptions: any = {
         // Default is to fail on error, no placeholder
         imagePlaceholder: undefined,
         // Default cache bust is false, it will use the cache
@@ -15,7 +15,7 @@
         corsImg: undefined,
     };
 
-    const domtoimage = {
+    const domtoimage: any = {
         toSvg: toSvg,
         toPng: toPng,
         toJpeg: toJpeg,
@@ -150,6 +150,7 @@
             .then(util.delay(100))
             .then(function(image) {
                 const canvas = newCanvas(domNode);
+                // @ts-ignore
                 canvas.getContext('2d').drawImage(image, 0, 0);
                 return canvas;
             });
@@ -161,7 +162,9 @@
 
             if (options.bgcolor) {
                 const ctx = canvas.getContext('2d');
+                // @ts-ignore
                 ctx.fillStyle = options.bgcolor;
+                // @ts-ignore
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
 
@@ -197,8 +200,10 @@
             function cloneChildrenInOrder(parent, children, filter) {
                 const done = Promise.resolve();
                 children.forEach(function(child) {
+                    // @ts-ignore
                     done = done
                         .then(function() {
+                            // @ts-ignore
                             return cloneNode(child, filter);
                         })
                         .then(function(childClone) {
@@ -426,6 +431,7 @@
                 const length = binaryString.length;
                 const binaryArray = new Uint8Array(length);
 
+                // @ts-ignore
                 for (const i = 0; i < length; i++) binaryArray[i] = binaryString.charCodeAt(i);
 
                 resolve(
@@ -461,6 +467,7 @@
 
             return function() {
                 // tslint:disable-next-line:prefer-template
+                // @ts-ignore
                 return 'u' + fourRandomChars() + index++;
 
                 function fourRandomChars() {
@@ -566,6 +573,7 @@
 
                     const encoder = new FileReader();
                     encoder.onloadend = function() {
+                        // @ts-ignore
                         const content = encoder.result.split(/,/)[1];
                         resolve(content);
                     };
@@ -610,6 +618,7 @@
         function asArray(arrayLike) {
             const array = [];
             const length = arrayLike.length;
+            // @ts-ignore
             for (const i = 0; i < length; i++) array.push(arrayLike[i]);
             return array;
         }
@@ -654,8 +663,11 @@
 
         function readUrls(string) {
             const result = [];
+            // @ts-ignore
             const match;
+            // @ts-ignore
             while ((match = URL_REGEX.exec(string)) !== null) {
+                // @ts-ignore
                 result.push(match[1]);
             }
             return result.filter(function(url) {
@@ -689,6 +701,7 @@
                 .then(function(urls) {
                     const done = Promise.resolve(string);
                     urls.forEach(function(url) {
+                        // @ts-ignore
                         done = done.then(function(string) {
                             return inline(string, url, baseUrl, get);
                         });
@@ -711,6 +724,7 @@
         };
 
         function resolveAll() {
+            // @ts-ignore
             return readAll(document)
                 .then(function(webFonts) {
                     return Promise.all(
@@ -761,6 +775,7 @@
                 return {
                     resolve: function resolve() {
                         const baseUrl = (webFontRule.parentStyleSheet || {}).href;
+                        // @ts-ignore
                         return inliner.inlineAll(webFontRule.cssText, baseUrl);
                     },
                     src: function() {
@@ -806,6 +821,7 @@
             if (!(node instanceof Element)) return Promise.resolve(node);
 
             return inlineBackground(node).then(function() {
+                // @ts-ignore
                 if (node instanceof HTMLImageElement) return newImage(node).inline();
                 else
                     return Promise.all(
@@ -821,6 +837,7 @@
                 if (!background) return Promise.resolve(node);
 
                 return inliner
+                // @ts-ignore
                     .inlineAll(background)
                     .then(function(inlined) {
                         node.style.setProperty(
