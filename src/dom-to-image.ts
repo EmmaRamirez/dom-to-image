@@ -12,6 +12,7 @@
         imagePlaceholder: undefined,
         // Default cache bust is false, it will use the cache
         cacheBust: false,
+        corsImg: undefined,
     };
 
     const domtoimage = {
@@ -134,6 +135,12 @@
             domtoimage.impl.options.cacheBust = defaultOptions.cacheBust;
         } else {
             domtoimage.impl.options.cacheBust = options.cacheBust;
+        }
+
+        if (typeof(options.corsImg) === 'undefined') {
+            domtoimage.impl.options.corsImg = defaultOptions.corsImg;
+        } else {
+            domtoimage.impl.options.corsImg = options.corsImg;
         }
     }
 
@@ -492,8 +499,48 @@
                 request.ontimeout = timeout;
                 request.responseType = 'blob';
                 request.timeout = TIMEOUT;
-                request.open('GET', url, true);
-                request.send();
+                // request.open('GET', url, true);
+                // request.send();
+
+                if (
+                    url.indexOf('http') === 0 &&
+                    url.indexOf(window.location.origin) === -1 &&
+                    domtoimage.impl.options.corsImg
+                ) {
+                    var method = domtoimage.impl.options.corsImg.method || 'GET';
+                    method = method.toUpperCase(method) === 'POST' ? 'POST' : 'GET';
+
+                    var reqUrl = domtoimage.impl.options.corsImg.url || '';
+                    reqUrl = reqUrl.replace('#{cors}', url);
+
+                    var data = domtoimage.impl.options.corsImg.data || '';
+                    try {
+                        data = JSON.parse(JSON.stringify(data));
+                    } catch (e) {
+                        fail('corsImg.data is not available');
+                        return;
+                    }
+
+                    Object.keys(data).forEach(function (key) {
+                        if (typeof(data[key]) === 'string') {
+                            data[key] = data[key].replace('#{cors}', url);
+                        }
+                    });
+                    request.open(method, reqUrl, true);
+
+                    var isJson = false;
+                    var headers = domtoimage.impl.options.corsImg.headers || {};
+                    Object.keys(headers).forEach(function (key) {
+                        if (headers[key].indexOf('application/json') !== -1) {
+                            isJson = true;
+                        }
+                        request.setRequestHeader(key, headers[key]);
+                    });
+                    request.send(isJson ? JSON.stringify(data) : data);
+                } else {
+                    request.open('GET', url, true);
+                    request.send();
+                }
 
                 let placeholder;
                 if (domtoimage.impl.options.imagePlaceholder) {
@@ -506,7 +553,7 @@
                 function done() {
                     if (request.readyState !== 4) return;
 
-                    if (request.status !== 200) {
+                    if (request.status >= 400) {
                         if (placeholder) {
                             resolve(placeholder);
                         } else {
