@@ -6,6 +6,9 @@
     "dependencies": {
         "react": "^16.4.1"
     },
+    "publishConfig": {
+        "access": "public"
+    },
     "devDependencies": {
         "@types/react": "^16.4.6",
         "chai": "^2.2.0",
